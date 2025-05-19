@@ -26,6 +26,114 @@ const products = [
     },
     priceCents: 799,
   },
+  {
+    image: "images/products/black-2-slot-toaster.jpg",
+    name: "2 Slot Toaster - Black",
+    rating: {
+      stars: 5,
+      count: 215,
+    },
+    priceCents: 1899,
+  },
+  {
+    image: "images/products/6-piece-white-dinner-plate-set.jpg",
+    name: "6 Piece White Dinner Plate Set",
+    rating: {
+      stars: 4,
+      count: 37,
+    },
+    priceCents: 2067,
+  },
+  {
+    image: "images/products/6-piece-non-stick-baking-set.webp",
+    name: "6-Piece Nonstick, Carbon Steel Oven Bakeware Baking Set",
+    rating: {
+      stars: 4.5,
+      count: 175,
+    },
+    priceCents: 3499,
+  },
+  {
+    image: "images/products/plain-hooded-fleece-sweatshirt-yellow.jpg",
+    name: "Plain Hooded Fleece Sweatshirt",
+    rating: {
+      stars: 4.5,
+      count: 317,
+    },
+    priceCents: 2400,
+  },
+  {
+    image: "images/products/blackout-curtain-set-beige.webp",
+    name: "Blackout Curtains Set 4-Pack - Beige",
+    rating: {
+      stars: 4.5,
+      count: 232,
+    },
+    priceCents: 4599,
+  },
+  {
+    image: "images/products/men-slim-fit-summer-shorts-gray.jpg",
+    name: "Men's Slim-Fit Summer Shorts",
+    rating: {
+      stars: 4,
+      count: 160,
+    },
+    priceCents: 1699,
+  },
+  {
+    image: "images/products/men-cozy-fleece-zip-up-hoodie-red.jpg",
+    name: "Men's Full-Zip Hooded Fleece Sweatshirt",
+    rating: {
+      stars: 4.5,
+      count: 3157,
+    },
+    priceCents: 2400,
+  },
+  {
+    image: "images/products/luxury-tower-set-6-piece.jpg",
+    name: "Luxury Towel Set - Graphite Gray",
+    rating: {
+      stars: 4.5,
+      count: 144,
+    },
+    priceCents: 3599,
+  },
+  {
+    image: "images/products/liquid-laundry-detergent-plain.jpg",
+    name: "Liquid Laundry Detergent, 110 Loads, 82.5 Fl Oz",
+    rating: {
+      stars: 3.5,
+      count: 305,
+    },
+    priceCents: 2899,
+  },
+  {
+    image: "images/products/round-sunglasses-black.jpg",
+    name: "Round Sunglasses",
+    rating: {
+      stars: 4.5,
+      count: 30,
+    },
+    priceCents: 1560,
+  },
+  {
+    image: "images/products/women-beach-sandals.jpg",
+    name: "Women's Two Strap Buckle Sandals - Tan",
+    rating: {
+      stars: 4.5,
+      count: 562,
+    },
+    priceCents: 2499,
+  },
+  {
+    image: "images/products/women-chunky-beanie-gray.webp",
+    name: "Women's Chunky Cable Beanie - Gray",
+    rating: {
+      stars: 5.0,
+      count: 83,
+    },
+    priceCents: 1250,
+  },
 ];
 
 let productsHTML = ``;
@@ -81,4 +189,4 @@ products.forEach((product) => {
         </div>`;
 });
 
-document.querySelector('.js-products-grid').innerHTML = productsHTML;
+document.querySelector(".js-products-grid").innerHTML = productsHTML;
