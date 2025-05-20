@@ -1,4 +1,10 @@
+import { cart } from "../data/cart.js";
+import { products } from "../data/products.js";
+
 let productsHTML = ``;
+let timeoutID;
+
+// Rendering the page -------->
 
 products.forEach((product) => {
   productsHTML += `<div class="product-container">
@@ -54,55 +60,66 @@ products.forEach((product) => {
           </button>
         </div>`;
 });
-
 document.querySelector(".js-products-grid").innerHTML = productsHTML;
 
-let timeoutID;
+// Functions below ------->
+
+function addToCart(productId) {
+  let matchingItem;
+
+  const quantity = Number(
+    document.querySelector(`.js-quantity-selector-${productId} select`).value
+  );
+
+  cart.forEach((item) => {
+    if (productId === item.productId) {
+      matchingItem = item;
+    }
+  });
+
+  if (matchingItem) {
+    matchingItem.quantity += quantity;
+  } else {
+    cart.push({
+      productId,
+      quantity,
+    });
+  }
+}
+
+function updateCartQuantity() {
+  let cartQuantity = 0;
+
+  cart.forEach((item) => {
+    cartQuantity += item.quantity;
+  });
+
+  document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
+}
+
+function showAddMessage(productId) {
+  document
+    .querySelector(`.js-added-to-cart-${productId}`)
+    .classList.add("added-to-cart-sccss");
+
+  clearTimeout(timeoutID);
+  timeoutID = setTimeout(() => {
+    document
+      .querySelector(`.js-added-to-cart-${productId}`)
+      .classList.remove("added-to-cart-sccss");
+  }, 2000);
+  // end of setTimeout
+}
+
+// Add to cart click functionality ------>
 
 document.querySelectorAll(".js-add-to-cart").forEach((button) => {
   button.addEventListener("click", () => {
     const productId = button.dataset.productId;
 
-    let matchingItem;
-
-    cart.forEach((item) => {
-      if (productId === item.productId) {
-        matchingItem = item;
-      }
-    });
-
-    if (matchingItem) {
-      matchingItem.quantity += 1;
-    } else {
-      cart.push({
-        productId,
-        quantity: 1,
-      });
-    }
-
-    let cartQuantity = 0;
-    cartQuantity += Number(
-      document.querySelector(`.js-quantity-selector-${productId} select`).value
-    );
-
-    cart.forEach((item) => {
-      cartQuantity += item.quantity;
-    });
-
-    document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
-
-    document
-      .querySelector(`.js-added-to-cart-${productId}`)
-      .classList.add("added-to-cart-sccss");
-
-    clearTimeout(timeoutID);
-    timeoutID = setTimeout(() => {
-      document
-        .querySelector(`.js-added-to-cart-${productId}`)
-        .classList.remove("added-to-cart-sccss");
-    }, 2000);
-
-    // end of setTimeout
+    addToCart(productId);
+    updateCartQuantity();
+    showAddMessage(productId);
   });
   // end of button.addEventListener
 });
