@@ -7,6 +7,8 @@ let timeoutID;
 
 // Rendering the page -------->
 
+updateCartQuantity();
+
 products.forEach((product) => {
   productsHTML += `<div class="product-container">
           <div class="product-image-container">
