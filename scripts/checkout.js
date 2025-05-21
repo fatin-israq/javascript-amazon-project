@@ -1,9 +1,20 @@
-import { cart, removeFromCart } from "../data/cart.js";
+import { cart, removeFromCart, cartQuantity } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
 let cartProductHTML = "";
 let matchingItem;
+
+updateCheckoutItem();
+
+function updateCheckoutItem() {
+  if (cartQuantity()) {
+    document.querySelector(
+      ".js-checkout-header-middle-section"
+    ).innerHTML = `Checkout (<a class="return-to-home-link"
+            href="amazon.html">${cartQuantity()} items</a>)`;
+  }
+}
 
 cart.forEach((cartItem) => {
   products.forEach((productItem) => {
@@ -107,5 +118,6 @@ document.querySelectorAll(".js-delete-link").forEach((link) => {
       `.js-cart-item-container-${productId}`
     );
     removedElement.remove();
+    updateCheckoutItem();
   });
 });
