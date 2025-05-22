@@ -10,46 +10,47 @@ import { formatCurrency } from "./utils/money.js";
 import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
 import { deliveryOptions } from "../data/deliveryOptions.js";
 
-let cartProductHTML = "";
-let matchingItem;
+function renderOrderSummary() {
+  let cartProductHTML = "";
+  let matchingItem;
 
-updateCheckoutItem();
+  updateCheckoutItem();
 
-function updateCheckoutItem() {
-  if (cartQuantity()) {
-    document.querySelector(
-      ".js-checkout-header-middle-section"
-    ).innerHTML = `Checkout (<a class="return-to-home-link"
+  function updateCheckoutItem() {
+    if (cartQuantity()) {
+      document.querySelector(
+        ".js-checkout-header-middle-section"
+      ).innerHTML = `Checkout (<a class="return-to-home-link"
             href="amazon.html">${cartQuantity()} items</a>)`;
+    }
   }
-}
 
-cart.forEach((cartItem) => {
-  products.forEach((productItem) => {
-    if (productItem.id === cartItem.productId) {
-      matchingItem = productItem;
-      return;
-    }
-  });
+  cart.forEach((cartItem) => {
+    products.forEach((productItem) => {
+      if (productItem.id === cartItem.productId) {
+        matchingItem = productItem;
+        return;
+      }
+    });
 
-  const deliveryOptionId = cartItem.deliveryOptionId;
+    const deliveryOptionId = cartItem.deliveryOptionId;
 
-  let deliveryOption;
+    let deliveryOption;
 
-  deliveryOptions.forEach((option) => {
-    if (option.id === deliveryOptionId) {
-      deliveryOption = option;
-    }
-  });
+    deliveryOptions.forEach((option) => {
+      if (option.id === deliveryOptionId) {
+        deliveryOption = option;
+      }
+    });
 
-  const today = dayjs();
-  const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
-  const dateString = deliveryDate.format("dddd, MMMM DD");
+    const today = dayjs();
+    const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
+    const dateString = deliveryDate.format("dddd, MMMM DD");
 
-  if (matchingItem) {
-    cartProductHTML += `<div class="cart-item-container js-cart-item-container-${
-      matchingItem.id
-    }">
+    if (matchingItem) {
+      cartProductHTML += `<div class="cart-item-container js-cart-item-container-${
+        matchingItem.id
+      }">
     <div class="delivery-date">
         Delivery date: ${dateString}
     </div>
@@ -90,24 +91,24 @@ cart.forEach((cartItem) => {
         </div>
     </div>
     </div>`;
-  }
-});
+    }
+  });
 
-function deliveryOptionsHTML(matchingItem, cartItem) {
-  let html = "";
+  function deliveryOptionsHTML(matchingItem, cartItem) {
+    let html = "";
 
-  deliveryOptions.forEach((deliveryOption) => {
-    const today = dayjs();
-    const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
-    const dateString = deliveryDate.format("dddd, MMMM DD");
-    const priceString =
-      deliveryOption.priceCents === 0
-        ? "FREE"
-        : `$${formatCurrency(deliveryOption.priceCents)} -`;
+    deliveryOptions.forEach((deliveryOption) => {
+      const today = dayjs();
+      const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
+      const dateString = deliveryDate.format("dddd, MMMM DD");
+      const priceString =
+        deliveryOption.priceCents === 0
+          ? "FREE"
+          : `$${formatCurrency(deliveryOption.priceCents)} -`;
 
-    const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
+      const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
 
-    html += `
+      html += `
         <div class="delivery-option js-delivery-option" data-product-id="${
           matchingItem.id
         }" data-delivery-option-id="${deliveryOption.id}">
@@ -124,41 +125,41 @@ function deliveryOptionsHTML(matchingItem, cartItem) {
             </div>
         </div>
     `;
+    });
+
+    return html;
+  }
+
+  document.querySelector(".js-order-summary").innerHTML = cartProductHTML;
+
+  document.querySelectorAll(".js-delete-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      const productId = link.dataset.productId;
+      removeFromCart(productId);
+
+      const removedElement = document.querySelector(
+        `.js-cart-item-container-${productId}`
+      );
+      removedElement.remove();
+      updateCheckoutItem();
+    });
   });
 
-  return html;
-}
+  document.querySelectorAll(".js-update-link").forEach(attachUpdateListener);
 
-document.querySelector(".js-order-summary").innerHTML = cartProductHTML;
+  function attachUpdateListener(updateLink) {
+    updateLink.addEventListener("click", () => {
+      const productId = updateLink.dataset.productId;
+      const quantityContainer = updateLink.closest(".product-quantity");
 
-document.querySelectorAll(".js-delete-link").forEach((link) => {
-  link.addEventListener("click", () => {
-    const productId = link.dataset.productId;
-    removeFromCart(productId);
+      if (quantityContainer) {
+        const oldQuantity =
+          quantityContainer.querySelector(".quantity-label").textContent;
 
-    const removedElement = document.querySelector(
-      `.js-cart-item-container-${productId}`
-    );
-    removedElement.remove();
-    updateCheckoutItem();
-  });
-});
+        const originalHTML = quantityContainer.innerHTML;
+        //   console.log(originalHTML);
 
-document.querySelectorAll(".js-update-link").forEach(attachUpdateListener);
-
-function attachUpdateListener(updateLink) {
-  updateLink.addEventListener("click", () => {
-    const productId = updateLink.dataset.productId;
-    const quantityContainer = updateLink.closest(".product-quantity");
-
-    if (quantityContainer) {
-      const oldQuantity =
-        quantityContainer.querySelector(".quantity-label").textContent;
-
-      const originalHTML = quantityContainer.innerHTML;
-      //   console.log(originalHTML);
-
-      quantityContainer.innerHTML = `
+        quantityContainer.innerHTML = `
         Quantity: <input type="number" class="quantity-input" value="${oldQuantity}" min="1" style="width: 50px">
         <span class="update-quantity-link link-primary js-save-link" data-product-id="${productId}">
           Save
@@ -168,60 +169,65 @@ function attachUpdateListener(updateLink) {
         </span>
       `;
 
-      const saveButton = quantityContainer.querySelector(".js-save-link");
-      const cancelButton = quantityContainer.querySelector(".js-cancel-link");
+        const saveButton = quantityContainer.querySelector(".js-save-link");
+        const cancelButton = quantityContainer.querySelector(".js-cancel-link");
 
-      function saveHandler() {
-        const newQuantity = Number(
-          quantityContainer.querySelector(".quantity-input").value
-        );
+        function saveHandler() {
+          const newQuantity = Number(
+            quantityContainer.querySelector(".quantity-input").value
+          );
 
-        // Update cart with new quantity
-        cart.forEach((cartItem) => {
-          if (cartItem.productId === productId) {
-            cartItem.quantity = newQuantity;
-          }
-        });
+          // Update cart with new quantity
+          cart.forEach((cartItem) => {
+            if (cartItem.productId === productId) {
+              cartItem.quantity = newQuantity;
+            }
+          });
 
-        // Save to localStorage
-        saveToStorage();
+          // Save to localStorage
+          saveToStorage();
 
-        // Update UI
-        quantityContainer.innerHTML = originalHTML;
-        quantityContainer.querySelector(".quantity-label").textContent =
-          newQuantity;
+          // Update UI
+          quantityContainer.innerHTML = originalHTML;
+          quantityContainer.querySelector(".quantity-label").textContent =
+            newQuantity;
 
-        // Update checkout header
-        updateCheckoutItem();
+          // Update checkout header
+          updateCheckoutItem();
 
-        // Remove event listeners to prevent memory leaks
-        saveButton.removeEventListener("click", saveHandler);
-        cancelButton.removeEventListener("click", cancelHandler);
+          // Remove event listeners to prevent memory leaks
+          saveButton.removeEventListener("click", saveHandler);
+          cancelButton.removeEventListener("click", cancelHandler);
+        }
+
+        function cancelHandler() {
+          quantityContainer.innerHTML = originalHTML;
+
+          // Remove event listeners
+          saveButton.removeEventListener("click", saveHandler);
+          cancelButton.removeEventListener("click", cancelHandler);
+        }
+
+        const newUpdateLink =
+          quantityContainer.querySelector(".js-update-link");
+        if (newUpdateLink) {
+          attachUpdateListener(newUpdateLink);
+        }
+
+        saveButton.addEventListener("click", saveHandler);
+        cancelButton.addEventListener("click", cancelHandler);
       }
+    });
+  }
 
-      function cancelHandler() {
-        quantityContainer.innerHTML = originalHTML;
+  document.querySelectorAll(".js-delivery-option").forEach((element) => {
+    element.addEventListener("click", () => {
+      const { productId, deliveryOptionId } = element.dataset;
 
-        // Remove event listeners
-        saveButton.removeEventListener("click", saveHandler);
-        cancelButton.removeEventListener("click", cancelHandler);
-      }
-
-      const newUpdateLink = quantityContainer.querySelector(".js-update-link");
-      if (newUpdateLink) {
-        attachUpdateListener(newUpdateLink);
-      }
-
-      saveButton.addEventListener("click", saveHandler);
-      cancelButton.addEventListener("click", cancelHandler);
-    }
+      updateDeliveryOption(productId, deliveryOptionId);
+      renderOrderSummary();
+    });
   });
 }
 
-document.querySelectorAll(".js-delivery-option").forEach((element) => {
-  element.addEventListener("click", () => {
-    const { productId, deliveryOptionId } = element.dataset;
-
-    updateDeliveryOption(productId, deliveryOptionId);
-  });
-});
+renderOrderSummary();
