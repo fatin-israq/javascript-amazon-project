@@ -94,6 +94,12 @@ export function renderOrderSummary() {
     deliveryOptions.forEach((deliveryOption) => {
       const today = dayjs();
       const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
+
+      // Friday delivery is closed for Bangladesh
+      if (deliveryDate.format("dddd") === "Friday") {
+        deliveryDate = deliveryDate.add(1, "days");
+      }
+      
       const dateString = deliveryDate.format("dddd, MMMM DD");
       const priceString =
         deliveryOption.priceCents === 0
