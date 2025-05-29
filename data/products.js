@@ -1,3 +1,5 @@
+export let products = [];
+
 export function getProduct(productId) {
   let matchingItem;
   products.forEach((productItem) => {
@@ -9,6 +11,22 @@ export function getProduct(productId) {
   return matchingItem;
 }
 
+
+export function loadProducts(func) {
+  const xhr = new XMLHttpRequest();
+
+  xhr.addEventListener("load", () => {
+    products = JSON.parse(xhr.response);
+    func();
+  });
+
+  xhr.open("GET", "https://supersimplebackend.dev/products");
+  xhr.send();
+}
+
+
+// Product List Down below
+/*
 export const products = [
   {
     id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
@@ -481,3 +499,4 @@ export const products = [
     keywords: ["sweaters", "hoodies", "apparel", "mens"],
   },
 ];
+*/
