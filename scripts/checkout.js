@@ -3,7 +3,12 @@ import { renderPaymentSummary } from "./checkout/paymentSummary.js";
 import { loadProducts } from "../data/products.js";
 import { cart } from "../data/cart.js";
 
-loadProducts(() => {
+// 
+new Promise((resolve) => {
+  loadProducts(() => {
+    resolve();
+  });
+}).then(() => {
   renderOrderSummary();
   renderPaymentSummary();
-});
+})
